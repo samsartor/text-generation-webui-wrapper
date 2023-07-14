@@ -1,11 +1,19 @@
-FROM alpine:3.17
+FROM start9/ai-base:latest
 
-RUN apk update
-RUN apk add --no-cache tini && \
-    rm -f /var/cache/apk/*
+RUN apt-get update && \
+    apt-get install -y git tini && \
+    rm -rf /var/lib/apt/lists
 
-ARG ARCH
-ADD ./hello-world/target/${ARCH}-unknown-linux-musl/release/hello-world /usr/local/bin/hello-world
-RUN chmod +x /usr/local/bin/hello-world
-ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
-RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
+ADD ./requirements-versions.txt ./text-generation-webui/requirements-versions.txt
+WORKDIR /text-generation-webui
+RUN pip install --no-deps -r requirements-versions.txt
+
+ADD ./text-generation-webui /text-generation-webui
+# ADD webui.patch webui.patch
+# RUN patch -p1 webui.patch
+# ADD ./icon.png icon.png
+ARG DEFAULT_MODEL
+ENV DEFAULT_MODEL=$DEFAULT_MODEL
+RUN mv models models_init
+ADD --chmod=755 ./check-mem.py /usr/local/bin/check-mem.py
+ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
