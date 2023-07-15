@@ -32,7 +32,7 @@ main:
 health-checks:
   webui:
     name: WebUI
-    success-message: Ready to visit Stable Diffusion in a web browser
+    success-message: Ready to visit GPT4All in a web browser
     type: script
   memory:
     name: Memory Usage
@@ -61,7 +61,7 @@ volumes:
 interfaces:
   main:
     name: User Interface
-    description: A browser interface based on Gradio library for Stable Diffusion.
+    description: A browser interface based on Gradio library for GPT4All.
     tor-config:
     # Port mappings are from the external port to the internal container port
       port-mapping:

@@ -9,12 +9,11 @@ WORKDIR /text-generation-webui
 RUN pip install --no-deps -r requirements-versions.txt
 
 ADD ./text-generation-webui /text-generation-webui
-# ADD webui.patch webui.patch
-# RUN patch -p1 webui.patch
+ADD webui.patch webui.patch
+RUN patch -p1 < webui.patch
 ADD ./icon.png icon.png
 ARG DEFAULT_MODEL
 ENV DEFAULT_MODEL=$DEFAULT_MODEL
 RUN mv models models_init
-ADD ./settings-template.yaml settings-template.yaml
 ADD --chmod=755 ./check-mem.py /usr/local/bin/check-mem.py
 ADD --chmod=755 ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh

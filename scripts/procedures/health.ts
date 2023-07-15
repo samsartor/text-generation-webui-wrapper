@@ -9,7 +9,7 @@ export const health: T.ExpectedExports.health = {
 			return errorValue;
 		}
 
-		const url = "http://stable-diffusion-webui.embassy:7860";
+		const url = "http://text-generation-webui.embassy:7860";
     return await effects.fetch(url)
       .then((_) => ok)
       .catch((e) => error(`Can not reach webserver.`));

@@ -7,13 +7,13 @@ cd /text-generation-webui
 mkdir -p /mnt/files/models
 rm -rf /mnt/files/models.tmp
 # Switch to a temporary directory in case the entrypoint dies
-mv /mnt/files/models /mnt/files/models.tmp
+mv -T /mnt/files/models /mnt/files/models.tmp
 # Copy small README-style files from the webui directory
-rsync -ru ./models_init/ /mnt/files/models/
+rsync -ru ./models_init/. /mnt/files/models.tmp/
 # Copy the larger default model checkpoints, using cp since it supports reflink
-cp -au --reflink=auto /mnt/default-models/. /mnt/files/models/
+cp -au --reflink=auto /mnt/default-models/. /mnt/files/models.tmp/
 # Make the temporary directory official
-mv /mnt/files/models.tmp /mnt/files/models
+mv -T /mnt/files/models.tmp /mnt/files/models
 # Symlink the models directory into the webui directory where it is expected
 ln -s /mnt/files/models
 
@@ -39,5 +39,6 @@ fi
 # Run the webui server
 exec tini -- python -u server.py \
   --chat --cpu \
+  --listen \
   --settings /data/settings.yaml \
   --model $DEFAULT_MODEL

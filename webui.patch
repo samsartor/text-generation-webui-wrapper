@@ -1,0 +1,26 @@
+From 81e1b111a3eb9d79aab45ac10dd81f1ad8fc82c9 Mon Sep 17 00:00:00 2001
+From: Sam Sartor <me@samsartor.com>
+Date: Sat, 15 Jul 2023 00:57:45 -0600
+Subject: [PATCH] switch to chat-instruct
+
+---
+ modules/models_settings.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/modules/models_settings.py b/modules/models_settings.py
+index 3f37e48..7bffc7f 100644
+--- a/modules/models_settings.py
++++ b/modules/models_settings.py
+@@ -14,6 +14,9 @@ def get_model_settings_from_yamls(model):
+             for k in settings[pat]:
+                 model_settings[k] = settings[pat][k]
+ 
++    if shared.args.chat and model_settings.get('mode') == 'instruct':
++        model_settings['mode'] = 'chat-instruct'
++
+     return model_settings
+ 
+ 
+-- 
+2.36.0
+
