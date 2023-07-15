@@ -40,7 +40,7 @@ scripts/embassy.js: $(TS_FILES)
 
 docker-images/x86_64.tar: manifest.yaml text-generation-webui/**/* docker_entrypoint.sh Dockerfile
 	mkdir -p docker-images
-	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 --build-arg MODEL=$(DEFAULT_MODEL) -o type=docker,dest=docker-images/x86_64.tar .
+	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --platform=linux/amd64 --build-arg DEFAULT_MODEL=$(DEFAULT_MODEL) -o type=docker,dest=docker-images/x86_64.tar .
 
 $(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/x86_64.tar assets/default-models/$(DEFAULT_MODEL)
 	@echo "embassy-sdk: Preparing x86_64 package ..."

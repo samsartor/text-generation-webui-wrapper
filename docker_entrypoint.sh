@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/bash
 
 # The root directory of the webui server
 cd /text-generation-webui
@@ -11,13 +11,33 @@ mv /mnt/files/models /mnt/files/models.tmp
 # Copy small README-style files from the webui directory
 rsync -ru ./models_init/ /mnt/files/models/
 # Copy the larger default model checkpoints, using cp since it supports reflink
-cp -rpu --reflink=auto /mnt/default-models/ /mnt/files/models/
+cp -au --reflink=auto /mnt/default-models/. /mnt/files/models/
 # Make the temporary directory official
 mv /mnt/files/models.tmp /mnt/files/models
 # Symlink the models directory into the webui directory where it is expected
 ln -s /mnt/files/models
 
+# Set up logs directory
+mkdir -p /mnt/files/logs
+ln -s /mnt/files/logs
+
+# Set up other persistant directories
+for dir in presets characters loras; do
+  if [ -d /mnt/files/$dir ]; then
+    rm -r $dir
+  else
+    mv $dir /mnt/files/$dir
+  fi
+  ln -s /mnt/files/$dir
+done
+
+# Create settings file
+if [ ! -f /data/settings.yaml ]; then
+  cp settings-template.yaml /data/settings.yaml
+fi
+
 # Run the webui server
 exec tini -- python -u server.py \
-  --chat \
+  --chat --cpu \
+  --settings /data/settings.yaml \
   --model $DEFAULT_MODEL
